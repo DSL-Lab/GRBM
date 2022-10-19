@@ -33,7 +33,7 @@ Python 3, PyTorch(1.12.0). Other dependencies can be installed via ```pip instal
     * inference_method: must be one of ```Gibbs```, ```Langevin```, ```Gibbs-Langevin```
     * Langevin_step: # inner loop Langevin steps for Gibbs-Langevin sampling method
     * Langevin_eta: step size of both Langevin and Gibbs-Langevin sampling methods
-    * Langevin_adjust_step: when set to ```X```, it enables Metropolis-Hastings adjustment from ```X```-th to ```#CD```-th steps 
+    * Langevin_adjust_step: when set to ```X```, it enables Metropolis adjustment from ```X```-th to ```#CD```-th steps 
     * is_vis_verbose: when set to True, it saves learned filters and hidden activations (conisder turning it off for better efficiency if you have too many filters and images are large)    
 * For CelebA experiments, you need to download the dataset and set the relative path as ```data/celeba```
 
