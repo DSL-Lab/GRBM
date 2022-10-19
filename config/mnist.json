@@ -1,0 +1,36 @@
+{
+    "dataset": "MNIST",
+    "cuda": true,
+    "model": "GRBM",
+    "batch_size": 512,
+    "epochs": 3000,
+    "lr": 0.01,
+    "clip_norm": 10.0,
+    "wd": 0.0,
+    "resume": 0,
+    "is_vis_verbose": true,
+    "init_var": 1.0,
+    "CD_step": 100,
+    "CD_burnin": 0,
+    "Langevin_step": 10,
+    "Langevin_eta": 20.0,
+    "Langevin_adjust_warmup_epoch": 0,
+    "Langevin_adjust_step": 100,
+    "inference_method": "Gibbs-Langevin",
+    "sampling_batch_size": 100,
+    "sampling_steps": 100,
+    "sampling_gap": 5,
+    "sampling_nrow": 10,
+    "height": 28,
+    "width": 28,
+    "channel": 1,
+    "img_mean": [
+        0.1307000070810318
+    ],
+    "img_std": [
+        0.30809998512268066
+    ],
+    "log_interval": 10,
+    "save_interval": 100,
+    "hidden_size": 4096
+}
