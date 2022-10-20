@@ -49,111 +49,6 @@ def train(model,
     return recon_loss
 
 
-def get_config(pid):
-    config = {}
-    # config['dataset'] = 'GMM_iso'
-    config['dataset'] = 'GMM_aniso'
-    # config['dataset'] = 'MNIST'
-    # config['dataset'] = 'CelebA'
-    # config['dataset'] = 'CelebA2K'
-    # config['dataset'] = 'FashionMNIST'
-    config['cuda'] = True
-    config['model'] = 'GRBM'
-    config['batch_size'] = 512
-    config['epochs'] = 10000
-    config['lr'] = 1.0e-2
-    config['clip_norm'] = 10.0
-    config['wd'] = 0.0e-4
-    config['resume'] = 0
-    # visualize sampling process, filters, hiddens if True
-    config['is_vis_verbose'] = False
-    config['init_var'] = 1e-0  # init variance of GRBM
-    config['CD_step'] = 100
-    config['CD_burnin'] = 0
-    config['Langevin_step'] = 10
-    config['Langevin_eta'] = 0.1
-    config['is_anneal_Langevin'] = True
-    config['Langevin_adjust_warmup_epoch'] = 0
-    config['Langevin_adjust_step'] = 0
-    # config['inference_method'] = 'Gibbs'
-    # config['inference_method'] = 'Langevin'
-    config['inference_method'] = 'Gibbs-Langevin'
-    config['sampling_batch_size'] = 100
-    config['sampling_steps'] = config['CD_step']
-    config['sampling_gap'] = min(5, config['sampling_steps'])
-    config['sampling_nrow'] = 10
-
-    if 'GMM' in config['dataset']:
-        config['batch_size'] = 100
-        config['num_samples'] = 1000
-        config['height'] = 1
-        config['width'] = 1
-        config['channel'] = 2
-        config['log_interval'] = 100
-        config['save_interval'] = 500
-        config['epochs'] = 50000
-        config['hidden_size'] = 256
-    elif config['dataset'] == 'MNIST':
-        config['height'] = 28
-        config['width'] = 28
-        config['channel'] = 1
-        config['img_mean'] = torch.tensor([0.1307])
-        config['img_std'] = torch.tensor([0.3081])
-        config['log_interval'] = 10
-        config['save_interval'] = 100
-        config['epochs'] = 3000
-        config['hidden_size'] = 4096
-    elif config['dataset'] == 'CelebA':
-        config['height'] = 32
-        config['width'] = 32
-        config['channel'] = 3
-        config['crop_size'] = 140
-        config['img_mean'] = torch.tensor([0.5240, 0.4152, 0.3590])
-        config['img_std'] = torch.tensor([0.2868, 0.2530, 0.2453])
-        config['log_interval'] = 1
-        config['save_interval'] = 5
-        config['hidden_size'] = 10000
-        config['sampling_batch_size'] = 64
-        config['sampling_nrow'] = 8
-    elif config['dataset'] == 'CelebA2K':
-        config['batch_size'] = 100
-        config['height'] = 64
-        config['width'] = 64
-        config['channel'] = 3
-        config['crop_size'] = 140
-        config['img_mean'] = torch.tensor([0.5240, 0.4152, 0.3590])
-        config['img_std'] = torch.tensor([0.2868, 0.2530, 0.2453])
-        config['log_interval'] = 1
-        config['save_interval'] = 5
-        config['hidden_size'] = 10000
-        config['sampling_batch_size'] = 64
-        config['sampling_nrow'] = 8
-    elif config['dataset'] == 'FashionMNIST':
-        config['height'] = 28
-        config['width'] = 28
-        config['channel'] = 1
-        config['img_mean'] = torch.tensor([0.2860])
-        config['img_std'] = torch.tensor([0.3530])
-        config['log_interval'] = 10
-        config['save_interval'] = 100
-        config['epochs'] = 3000
-        config['hidden_size'] = 4096
-
-    config['visible_size'] = config['height'] * \
-        config['width'] * config['channel']
-
-    if config['inference_method'] == 'Gibbs':
-        config[
-            'exp_folder'] = f"exp/{config['dataset']}_{config['model']}_{pid}_inference={config['inference_method']}_H={config['hidden_size']}_B={config['batch_size']}_CD={config['CD_step']}"
-    elif config['inference_method'] == 'Langevin':
-        config[
-            'exp_folder'] = f"exp/{config['dataset']}_{config['model']}_{pid}_inference={config['inference_method']}_Langevin_adjust_warmup_epoch={config['Langevin_adjust_warmup_epoch']}_is_anneal_Langevin={config['is_anneal_Langevin']}_Langevin_adjust_step={config['Langevin_adjust_step']}_Langevin_eta={config['Langevin_eta']}_H={config['hidden_size']}_B={config['batch_size']}_CD={config['CD_step']}"
-    elif config['inference_method'] == 'Gibbs-Langevin':
-        config['exp_folder'] = f"exp/{config['dataset']}_{config['model']}_{pid}_inference={config['inference_method']}_Langevin_adjust_warmup_epoch={config['Langevin_adjust_warmup_epoch']}_is_anneal_Langevin={config['is_anneal_Langevin']}_Langevin_adjust_step={config['Langevin_adjust_step']}_Langevin_eta={config['Langevin_eta']}_Langevin_step={config['Langevin_step']}_H={config['hidden_size']}_B={config['batch_size']}_CD={config['CD_step']}"
-
-    return config
-
-
 def create_dataset(config):
     if 'GMM' in config['dataset']:
         if config['dataset'] == 'GMM_iso':
@@ -183,26 +78,28 @@ def create_dataset(config):
                                    ]))
     elif config['dataset'] == 'CelebA':
         train_set = datasets.CelebA('./data',
-                           split='train',
-                           download=False,
-                           transform=transforms.Compose([
-                               transforms.CenterCrop(config['crop_size']),
-                               transforms.Resize(config['height']),
-                               transforms.ToTensor(),
-                               transforms.Normalize(config['img_mean'],
-                                                    config['img_std'])
-                           ]))
+                                    split='train',
+                                    download=False,
+                                    transform=transforms.Compose([
+                                        transforms.CenterCrop(
+                                            config['crop_size']),
+                                        transforms.Resize(config['height']),
+                                        transforms.ToTensor(),
+                                        transforms.Normalize(config['img_mean'],
+                                                             config['img_std'])
+                                    ]))
     elif config['dataset'] == 'CelebA2K':
         train_set = datasets.CelebA('./data',
-                           split='train',
-                           download=False,
-                           transform=transforms.Compose([
-                               transforms.CenterCrop(config['crop_size']),
-                               transforms.Resize(config['height']),
-                               transforms.ToTensor(),
-                               transforms.Normalize(config['img_mean'],
-                                                    config['img_std'])
-                           ]))
+                                    split='train',
+                                    download=False,
+                                    transform=transforms.Compose([
+                                        transforms.CenterCrop(
+                                            config['crop_size']),
+                                        transforms.Resize(config['height']),
+                                        transforms.ToTensor(),
+                                        transforms.Normalize(config['img_mean'],
+                                                             config['img_std'])
+                                    ]))
         train_set = torch.utils.data.Subset(train_set, range(2000))
     elif config['dataset'] == 'FashionMNIST':
         train_set = datasets.FashionMNIST('./data',
