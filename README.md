@@ -1,11 +1,11 @@
 # Gaussian-Bernoulli Restricted Boltzmann Machines (GRBMs)
-This is the official PyTorch implementation of [Gaussian-Bernoulli RBMs Without Tears](https://arxiv.org/abs/xxxx.xxxxx) as described in the following paper:
+This is the official PyTorch implementation of [Gaussian-Bernoulli RBMs Without Tears](https://arxiv.org/abs/2210.10318) as described in the following paper:
 
 ```
 @article{liao2022grbm,
   title={Gaussian-Bernoulli RBMs Without Tears}, 
   author={Liao, Renjie and Kornblith, Simon and Ren, Mengye and Fleet, David J and Hinton, Geoffrey}, 
-  journal={arXiv preprint arXiv:xxxx.xxxxx},
+  journal={arXiv preprint arXiv:2210.10318},
   year={2022}
 }
 ```
