@@ -64,7 +64,7 @@ class GRBM(nn.Module):
         var = self.get_var()
         eng = 0.5 * ((v - self.mu)**2 / var).sum(dim=1)
         eng -= ((v / var).mm(self.W) * h).sum(dim=1) + h.mv(self.b)
-        return eng
+        return eng / B
 
     @torch.no_grad()
     def marginal_energy(self, v):
