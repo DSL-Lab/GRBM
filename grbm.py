@@ -61,6 +61,7 @@ class GRBM(nn.Module):
     @torch.no_grad()
     def energy(self, v, h):
         # compute per-sample energy averaged over batch size
+        B = v.shape[0]
         var = self.get_var()
         eng = 0.5 * ((v - self.mu)**2 / var).sum(dim=1)
         eng -= ((v / var).mm(self.W) * h).sum(dim=1) + h.mv(self.b)
